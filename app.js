@@ -19,7 +19,6 @@ mongoose.connection.once('open', function(){
 });
 
 // route
-var routes = require('./routes/index');
 var users = require('./routes/users');
 var lists = require('./routes/lists');
 var auth = require('./routes/auth');
@@ -43,7 +42,6 @@ app.use(function (req, res, next){
   next();
 });
 
-app.use('/', routes);
 app.use('/auth/', auth);
 app.use('/api/users', users);
 app.use('/api/lists', lists);
