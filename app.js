@@ -4,29 +4,50 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var onFinished = require('on-finished');
+var debug = require('debug')('app:' + process.pid);
 
+// mongoo connect
+var mongoose = require('mongoose');
+mongoose.set('debug', true);
+mongoose.connect('mongodb://localhost/sharelist');
+mongoose.connection.on('error', function(){
+  console.log("Mongoose connection error [from console]");
+});
+mongoose.connection.once('open', function(){
+  console.log("Mongoose connected to the database [from console]");
+});
+
+// route
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var lists = require('./routes/lists');
+var auth = require('./routes/auth');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(function (req, res, next){
+  onFinished(res, function(err){
+    console.log("[%s] finished request", req.connection.remoteAddress);
+  });
+  next();
+});
 
 app.use('/', routes);
-app.use('/users', users);
-app.use('/lists', lists);
-/**/
+app.use('/auth/', auth);
+app.use('/api/users', users);
+app.use('/api/lists', lists);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -42,7 +63,7 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
       message: err.message,
       error: err
     });
@@ -53,7 +74,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: {}
   });

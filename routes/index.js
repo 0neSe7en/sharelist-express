@@ -8,11 +8,16 @@ router.get('/', function (req, res, next) {
 
 router.route('/login')
   .get(function (req, res) {
-    res.send("login[GET]");
+    res.render('login', {title: '登录'});
   })
-  .post(function (req, res) {
-    res.send("login[POST]");
-  });
+  .post(
+    function(req, res){
+      res.redirect('/');
+    }
+);
+  //.post(function (req, res) {
+  //  res.send("login[POST]");
+  //});
 
 router.route('/logout')
   .get(function (req, res) {
@@ -20,6 +25,14 @@ router.route('/logout')
   })
   .post(function (req, res) {
     res.send("logout[POST]");
+  });
+
+router.route('/register')
+  .get(function (req, res){
+    res.send("register[GET]");
+  })
+  .post(function (req, res){
+    res.send('register[POST]');
   });
 
 
