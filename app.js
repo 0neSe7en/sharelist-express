@@ -1,3 +1,8 @@
+/// <reference path="typings/node/node.d.ts"/>
+/// <reference path="typings/express/express.d.ts" />
+/// <reference path="typings/angularjs/angular.d.ts" />
+/// <reference path="typings/mongoose/mongoose.d.ts" />
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -5,6 +10,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var onFinished = require('on-finished');
+var http = require('http');
 //var debug = require('debug')('app:' + process.pid);
 
 var mongoose = require('mongoose');
