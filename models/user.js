@@ -40,7 +40,7 @@ UserSchema.statics.getToken = function(name, pwd, cb){
         cb({err: "Password Invaild"});
       }
     }
-  )
+  );
 };
 
 function getHashPwd(pwd){

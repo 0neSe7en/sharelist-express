@@ -5,9 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var onFinished = require('on-finished');
-var debug = require('debug')('app:' + process.pid);
+//var debug = require('debug')('app:' + process.pid);
 
-// mongoo connect
 var mongoose = require('mongoose');
 mongoose.set('debug', true);
 mongoose.connect('mongodb://localhost/sharelist');
