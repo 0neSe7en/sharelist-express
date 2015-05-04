@@ -4,16 +4,13 @@
 /// <reference path="typings/mongoose/mongoose.d.ts" />
 
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var onFinished = require('on-finished');
-var http = require('http');
-//var debug = require('debug')('app:' + process.pid);
-
+var debug = require('debug')('app:' + process.pid);
 var mongoose = require('mongoose');
+
+//mongoose init...
 mongoose.set('debug', true);
 mongoose.connect('mongodb://localhost/sharelist');
 mongoose.connection.on('error', function(){
@@ -23,30 +20,33 @@ mongoose.connection.once('open', function(){
   console.log("Mongoose connected to the database [from console]");
 });
 
-// route
+//route init...
 var users = require('./routes/users');
 var lists = require('./routes/lists');
 var auth = require('./routes/auth');
 
+// app init ...
 var app = express();
-
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
 app.use(function (req, res, next){
   onFinished(res, function(err){
     console.log("[%s] finished request", req.connection.remoteAddress);
   });
   next();
 });
-
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/front/index.html', function(err){
+    if (err){
+      console.log(err);
+      res.status(err.status).end();
+    }
+    else {
+      console.log("Send index.html");
+    }
+  })
+});
 app.use('/auth/', auth);
 app.use('/api/users', users);
 app.use('/api/lists', lists);
@@ -85,6 +85,8 @@ app.use(function (err, req, res, next) {
 
 
 module.exports = app;
-
-var server = http.createServer(app);
-server.listen(3000);
+var server = require('http').createServer(app);
+var io = require('./sockets').io(server);
+server.listen(3000, function(){
+  console.log("listening PORT:3000");
+});
