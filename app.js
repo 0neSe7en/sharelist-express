@@ -27,6 +27,7 @@ var auth = require('./routes/auth');
 
 // app init ...
 var app = express();
+app.use(express.static('front'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

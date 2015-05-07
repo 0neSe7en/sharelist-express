@@ -18,7 +18,16 @@ router.post('/', function(req, res){
   );
   user.save(function(err, user){
     if (err){
-      res.status(403).send(err);
+      if (err.message.indexOf('duplicate key error') == -1){
+        res.status(403).send(err);
+      }
+      else {
+        var errMessage = {
+          message: 'duplicate'
+        };
+        errMessage.name = err.message.indexOf('@') == -1 ? 'email' : 'name';
+        res.status(403).send(errMessage);
+      }
     }
     else {
       res.json({user: user._id});

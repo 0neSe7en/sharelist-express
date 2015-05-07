@@ -1,0 +1,7 @@
+.register {
+    transition:0.5s linear all;
+    background: white;
+}
+.register.ng-invalid {
+    background: red;
+}
